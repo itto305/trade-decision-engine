@@ -1063,7 +1063,7 @@
     <div class="tip" id="rrTip">Ratio ≥ 2:1 required to proceed.</div>
 
     <div class="nav-row">
-      <button class="btn btn-ghost" disabled>← BACK</button>
+      <button class="btn btn-ghost" onclick="goStep0()">← BACK</button>
       <button class="btn btn-primary" onclick="goStep(2)">NEXT →</button>
     </div>
   </div>
@@ -1644,6 +1644,14 @@ function goStep(n) {
   el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+    function goStep0() {
+      [1,2,3,4,5].forEach(i => document.getElementById('step'+i).classList.add('hidden'));
+          document.getElementById('verdictSection').classList.add('hidden');
+      document.getElementById('progressWrap').classList.add('hidden');
+      document.getElementById('step0').style.display = '';
+      currentStep = 0;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 // ─── Step 1 Logic ───────────────────────────────────────────────────
 function updateStep1() {
   const entry = parseFloat(document.getElementById('entryPrice').value) || 100;
