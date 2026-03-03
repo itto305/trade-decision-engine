@@ -6,18 +6,66 @@
 <title>Trade Decision Engine</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+  /* ── Dark mode (default) ── */
   :root {
     --bg: #0a0a0a;
     --surface: #111111;
     --border: #1f1f1f;
+    --border-hover: #444444;
     --accent: #c8f542;
+    --accent-hover: #d4ff55;
+    --accent-faint: rgba(200,245,66,0.08);
+    --accent-glow: rgba(200,245,66,0.2);
+    --accent-muted: rgba(200,245,66,0.5);
     --accent2: #ff4d4d;
     --accent3: #4daaff;
+    --accent3-faint: rgba(77,170,255,0.3);
     --text: #e8e8e8;
-    --muted: #555;
+    --muted: #666;
     --pass: #c8f542;
     --fail: #ff4d4d;
     --wait: #ffb84d;
+    --grid-line: rgba(200,245,66,0.03);
+    --input-bg: #0a0a0a;
+    --computed-bg: #0d1a00;
+    --computed-border: rgba(200,245,66,0.15);
+    --ai-bg: #050d1a;
+    --ai-border: rgba(77,170,255,0.2);
+    --ai-text: #8ab4d4;
+    --h1-color: #ffffff;
+    --score-tile-bg: #111111;
+  }
+
+  /* ── Light mode ── */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f5f0;
+      --surface: #ffffff;
+      --border: #ddddd8;
+      --border-hover: #aaaaaa;
+      --accent: #5a9e00;
+      --accent-hover: #4d8800;
+      --accent-faint: rgba(90,158,0,0.08);
+      --accent-glow: rgba(90,158,0,0.2);
+      --accent-muted: rgba(90,158,0,0.6);
+      --accent2: #cc2200;
+      --accent3: #1a6fc4;
+      --accent3-faint: rgba(26,111,196,0.2);
+      --text: #1a1a1a;
+      --muted: #888;
+      --pass: #5a9e00;
+      --fail: #cc2200;
+      --wait: #b86000;
+      --grid-line: rgba(90,158,0,0.06);
+      --input-bg: #fafaf7;
+      --computed-bg: #f0f7e6;
+      --computed-border: rgba(90,158,0,0.2);
+      --ai-bg: #eef4fb;
+      --ai-border: rgba(26,111,196,0.2);
+      --ai-text: #2a5a8a;
+      --h1-color: #111111;
+      --score-tile-bg: #f5f5f0;
+    }
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,8 +84,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(200,245,66,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200,245,66,0.03) 1px, transparent 1px);
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
     background-size: 48px 48px;
     pointer-events: none;
     z-index: 0;
@@ -73,7 +121,7 @@
     font-size: clamp(54px, 10vw, 96px);
     letter-spacing: 0.04em;
     line-height: 0.9;
-    color: #fff;
+    color: var(--h1-color);
   }
 
   h1 span {
@@ -106,7 +154,7 @@
   }
 
   .prog-step.active { background: var(--accent); }
-  .prog-step.done { background: rgba(200,245,66,0.4); }
+  .prog-step.done { background: var(--accent-faint); }
 
   /* Card */
   .card {
@@ -186,7 +234,7 @@
   }
 
   input[type="number"], input[type="text"], select {
-    background: #0a0a0a;
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 2px;
     color: var(--text);
@@ -227,12 +275,12 @@
     border-radius: 50%;
     background: var(--accent);
     cursor: pointer;
-    box-shadow: 0 0 0 3px rgba(200,245,66,0.2);
+    box-shadow: 0 0 0 3px var(--accent-glow);
     transition: box-shadow 0.2s;
   }
 
   input[type="range"]::-webkit-slider-thumb:hover {
-    box-shadow: 0 0 0 6px rgba(200,245,66,0.2);
+    box-shadow: 0 0 0 6px var(--accent-glow);
   }
 
   .range-labels {
@@ -253,8 +301,8 @@
 
   /* Computed badges */
   .computed {
-    background: #0d1a00;
-    border: 1px solid rgba(200,245,66,0.15);
+    background: var(--computed-bg);
+    border: 1px solid var(--computed-border);
     border-radius: 2px;
     padding: 16px 20px;
     margin-top: 20px;
@@ -309,7 +357,7 @@
   }
 
   .chip:hover { border-color: var(--accent); color: var(--text); }
-  .chip.selected { border-color: var(--accent); background: rgba(200,245,66,0.08); color: var(--accent); }
+  .chip.selected { border-color: var(--accent); background: var(--accent-faint); color: var(--accent); }
 
   /* Navigation */
   .nav-row {
@@ -336,9 +384,9 @@
   }
 
   .btn-primary:hover {
-    background: #d4ff55;
+    background: var(--accent-hover);
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(200,245,66,0.2);
+    box-shadow: 0 8px 24px var(--accent-glow);
   }
 
   .btn-ghost {
@@ -347,7 +395,7 @@
     border: 1px solid var(--border);
   }
 
-  .btn-ghost:hover { color: var(--text); border-color: #333; }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-hover); }
 
   .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
 
@@ -409,7 +457,7 @@
   }
 
   .score-tile {
-    background: var(--surface);
+    background: var(--score-tile-bg);
     border: 1px solid var(--border);
     border-radius: 2px;
     padding: 16px 8px;
@@ -437,8 +485,8 @@
 
   /* AI Analysis box */
   .ai-box {
-    background: #050d1a;
-    border: 1px solid rgba(77,170,255,0.2);
+    background: var(--ai-bg);
+    border: 1px solid var(--ai-border);
     border-radius: 2px;
     padding: 24px;
     margin-top: 28px;
@@ -476,7 +524,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 13px;
     line-height: 1.8;
-    color: #8ab4d4;
+    color: var(--ai-text);
     white-space: pre-wrap;
   }
 
@@ -498,7 +546,7 @@
   .spinner {
     display: inline-block;
     width: 14px; height: 14px;
-    border: 2px solid rgba(77,170,255,0.3);
+    border: 2px solid var(--accent3-faint);
     border-top-color: var(--accent3);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
@@ -508,7 +556,18 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Asset input section */
+  /* Tooltips */
+  .tip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent-muted);
+    margin-top: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .tip::before { content: '→'; flex-shrink: 0; }
   .asset-input-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -533,10 +592,10 @@
   }
 
   .big-input {
-    background: #0a0a0a;
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 2px;
-    color: #fff;
+    color: var(--text);
     font-family: 'Bebas Neue', sans-serif;
     font-size: 36px;
     letter-spacing: 0.06em;
@@ -547,7 +606,7 @@
   }
 
   .big-input:focus { outline: none; border-color: var(--accent); }
-  .big-input::placeholder { color: #2a2a2a; }
+  .big-input::placeholder { color: var(--border); }
 
   /* Animations */
   @keyframes fadeDown {
@@ -579,20 +638,103 @@
     margin: 20px auto 0;
   }
 
-  .btn-reset:hover { color: var(--text); border-color: #333; }
+  .btn-reset:hover { color: var(--text); border-color: var(--border-hover); }
 
-  /* Tooltips */
-  .tip {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: rgba(200,245,66,0.5);
-    margin-top: 6px;
+  /* Market data banner */
+  .market-banner {
+    background: var(--computed-bg);
+    border: 1px solid var(--computed-border);
+    border-radius: 2px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .market-banner.loading {
+    opacity: 0.7;
+  }
+
+  .market-ticker {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+
+  .market-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+  }
+
+  .market-change {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .market-change.up { background: rgba(90,158,0,0.15); color: var(--pass); }
+  .market-change.down { background: rgba(204,34,0,0.12); color: var(--fail); }
+
+  .market-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+    display: flex;
+    align-items: center;
     gap: 6px;
   }
 
-  .tip::before { content: '→'; flex-shrink: 0; }
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--pass);
+    animation: pulse 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  .market-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .market-stat {
+    text-align: center;
+  }
+
+  .market-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .market-stat-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .prefill-notice {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+
+  /* Asset input section */
 
   @media (max-width: 600px) {
     .field-row { grid-template-columns: 1fr; }
@@ -615,7 +757,7 @@
   <div id="step0" class="asset-input-wrap">
     <h2>What are you evaluating?</h2>
     <p>Enter the ticker, asset name, or investment you want to analyze</p>
-    <input class="big-input" id="assetName" type="text" placeholder="e.g. NVDA, BTC, SPY..." maxlength="30">
+    <input class="big-input" id="assetName" type="text" placeholder="e.g. NVDA, BTC, SPY..." maxlength="30" onkeydown="if(event.key==='Enter') startAnalysis()">
     <div style="margin-top:16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="startAnalysis()">BEGIN ANALYSIS →</button>
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">5 criteria · AI verdict</div>
@@ -638,6 +780,10 @@
     <div class="step-label">Step 01 / 05</div>
     <h2><span class="icon">🎯</span> Return Target</h2>
     <div class="card-desc">Define your minimum acceptable return and your realistic target. The ratio between these determines if this trade is mathematically worth taking.</div>
+
+    <!-- Live market data banner (populated by JS) -->
+    <div id="marketBanner" class="hidden"></div>
+    <div id="prefillNotice" class="prefill-notice hidden">↳ ENTRY PRICE PRE-FILLED FROM LIVE MARKET DATA — ADJUST AS NEEDED</div>
 
     <div class="field-row">
       <div class="field">
@@ -916,12 +1062,113 @@ let currentStep = 0;
 let selectedEdgeTypes = [];
 
 // ─── Step 0: Start ──────────────────────────────────────────────────
-function startAnalysis() {
+async function startAnalysis() {
   const name = document.getElementById('assetName').value.trim();
   if (!name) { document.getElementById('assetName').focus(); return; }
+
+  // Show loading state on button
+  const btn = document.querySelector('#step0 .btn-primary');
+  btn.textContent = 'FETCHING MARKET DATA...';
+  btn.disabled = true;
+
   document.getElementById('step0').style.display = 'none';
   document.getElementById('progressWrap').classList.remove('hidden');
   goStep(1);
+
+  // Show loading banner
+  const banner = document.getElementById('marketBanner');
+  banner.classList.remove('hidden');
+  banner.className = 'market-banner loading';
+  banner.innerHTML = `<span class="spinner"></span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">Fetching live market data for ${name.toUpperCase()}...</span>`;
+
+  try {
+    await fetchMarketData(name.toUpperCase());
+  } catch(e) {
+    banner.innerHTML = `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">⚠ Could not load market data — enter prices manually.</span>`;
+    banner.className = 'market-banner';
+  }
+
+  btn.textContent = 'BEGIN ANALYSIS →';
+  btn.disabled = false;
+}
+
+// ─── Market Data via Claude API + Web Search ─────────────────────────
+async function fetchMarketData(ticker) {
+  const banner = document.getElementById('marketBanner');
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{
+        role: 'user',
+        content: `Search for the current live price of "${ticker}" (stock, ETF, or crypto ticker). Return ONLY a JSON object with NO markdown, NO backticks, NO explanation — just raw JSON like:
+{"price": 182.45, "change": 1.23, "changePct": 0.68, "high52w": 210.00, "low52w": 140.00, "volume": "45.2M", "name": "Apple Inc", "currency": "USD"}
+
+If it's a crypto use its current price in USD. Use the most recent trading price available. If you cannot find the data, return {"error": "not found"}.`
+      }]
+    })
+  });
+
+  if (!response.ok) throw new Error('API error');
+
+  const data = await response.json();
+
+  // Extract text from response — could be after tool use blocks
+  const textBlock = data.content?.find(b => b.type === 'text');
+  if (!textBlock) throw new Error('No text response');
+
+  // Strip any accidental markdown fences
+  const raw = textBlock.text.replace(/```json|```/g, '').trim();
+  const market = JSON.parse(raw);
+
+  if (market.error) throw new Error(market.error);
+
+  // Pre-fill entry price
+  const price = parseFloat(market.price);
+  if (price && price > 0) {
+    document.getElementById('entryPrice').value = price.toFixed(2);
+    // Suggest target (+20%) and stop-loss (-10%) as sensible defaults
+    document.getElementById('targetPrice').value = (price * 1.20).toFixed(2);
+    document.getElementById('stopLoss').value = (price * 0.90).toFixed(2);
+    document.getElementById('prefillNotice').classList.remove('hidden');
+    updateStep1();
+  }
+
+  // Render banner
+  const isUp = parseFloat(market.changePct) >= 0;
+  const changeLabel = (isUp ? '▲ +' : '▼ ') + Math.abs(market.changePct).toFixed(2) + '%';
+
+  banner.className = 'market-banner';
+  banner.innerHTML = `
+    <div>
+      <div class="market-ticker">${ticker}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${market.name || ''}</div>
+    </div>
+    <div class="market-price">${market.currency || '$'}${parseFloat(market.price).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+    <div class="market-change ${isUp ? 'up' : 'down'}">${changeLabel} today</div>
+    <div class="market-stats">
+      <div class="market-stat">
+        <div class="market-stat-label">52W High</div>
+        <div class="market-stat-val">${market.high52w ? '$' + parseFloat(market.high52w).toLocaleString() : '—'}</div>
+      </div>
+      <div class="market-stat">
+        <div class="market-stat-label">52W Low</div>
+        <div class="market-stat-val">${market.low52w ? '$' + parseFloat(market.low52w).toLocaleString() : '—'}</div>
+      </div>
+      <div class="market-stat">
+        <div class="market-stat-label">Volume</div>
+        <div class="market-stat-val">${market.volume || '—'}</div>
+      </div>
+    </div>
+    <div class="market-meta"><div class="live-dot"></div> LIVE DATA</div>
+  `;
 }
 
 // ─── Navigation ─────────────────────────────────────────────────────
@@ -1232,13 +1479,21 @@ Write a concise, sharp 5-7 sentence analysis (no headers, no bullet points, flow
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(`API error ${response.status}: ${errData?.error?.message || response.statusText}`);
+    }
 
     const data = await response.json();
     const text = data.content?.find(b => b.type === 'text')?.text || 'Analysis unavailable.';
@@ -1263,7 +1518,7 @@ Write a concise, sharp 5-7 sentence analysis (no headers, no bullet points, flow
     type();
 
   } catch (err) {
-    document.getElementById('aiText').textContent = 'Could not connect to AI analysis. Please check your connection.';
+    document.getElementById('aiText').textContent = `Analysis error: ${err.message}`;
   }
 }
 
@@ -1276,6 +1531,15 @@ function resetAll() {
   [1,2,3,4,5].forEach(i => document.getElementById('step'+i).classList.add('hidden'));
   document.getElementById('verdictSection').classList.add('hidden');
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  // Reset market data UI
+  const banner = document.getElementById('marketBanner');
+  banner.classList.add('hidden');
+  banner.innerHTML = '';
+  document.getElementById('prefillNotice').classList.add('hidden');
+  // Reset price fields to defaults
+  document.getElementById('entryPrice').value = '100';
+  document.getElementById('targetPrice').value = '130';
+  document.getElementById('stopLoss').value = '90';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
