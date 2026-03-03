@@ -1507,78 +1507,81 @@ async function startAnalysis() {
   btn.disabled = false;
 }
 
-// ─── Market Data via Claude API + Web Search ─────────────────────────
+// ─── Market Data via Yahoo Finance (CORS proxy) ──────────────────────
 async function fetchMarketData(ticker) {
   const banner = document.getElementById('marketBanner');
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'anthropic-version': '2023-06-01'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{
-        role: 'user',
-        content: `Search for the current live price of "${ticker}" (stock, ETF, or crypto ticker). Return ONLY a JSON object with NO markdown, NO backticks, NO explanation — just raw JSON like:
-{"price": 182.45, "change": 1.23, "changePct": 0.68, "high52w": 210.00, "low52w": 140.00, "volume": "45.2M", "name": "Apple Inc", "currency": "USD"}
+  const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=1d`;
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(yahooUrl)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(yahooUrl)}`
+  ];
 
-If it's a crypto use its current price in USD. Use the most recent trading price available. If you cannot find the data, return {"error": "not found"}.`
-      }]
-    })
-  });
-
-  if (!response.ok) throw new Error('API error');
-
-  const data = await response.json();
-
-  const textBlock = data.content?.find(b => b.type === 'text');
-  if (!textBlock) throw new Error('No text response');
-
-  const raw = textBlock.text.replace(/```json|```/g, '').trim();
-  const market = JSON.parse(raw);
-
-  if (market.error) throw new Error(market.error);
-
-  const price = parseFloat(market.price);
-  if (price && price > 0) {
-    document.getElementById('entryPrice').value = price.toFixed(2);
-    document.getElementById('targetPrice').value = (price * 1.20).toFixed(2);
-    document.getElementById('stopLoss').value = (price * 0.90).toFixed(2);
-    document.getElementById('prefillNotice').classList.remove('hidden');
-    updateStep1();
+  let chartData = null;
+  for (const proxy of proxies) {
+    try {
+      const res = await fetch(proxy);
+      if (!res.ok) continue;
+      const json = await res.json();
+      if (json.chart?.result?.[0]) { chartData = json; break; }
+    } catch (_) { continue; }
   }
 
-  const isUp = parseFloat(market.changePct) >= 0;
-  const changeLabel = (isUp ? '▲ +' : '▼ ') + Math.abs(market.changePct).toFixed(2) + '%';
+  if (!chartData?.chart?.result?.[0]) throw new Error('No market data found for ' + ticker);
+
+  const meta = chartData.chart.result[0].meta;
+  const price = meta.regularMarketPrice;
+  if (!price || price <= 0) throw new Error('Invalid price data');
+
+  const prevClose = meta.previousClose || meta.chartPreviousClose || price;
+  const changePct = prevClose ? ((price - prevClose) / prevClose * 100) : 0;
+  const high52w = meta.fiftyTwoWeekHigh;
+  const low52w = meta.fiftyTwoWeekLow;
+  const volume = formatVolume(meta.regularMarketVolume);
+  const name = meta.shortName || meta.longName || ticker;
+  const currencySymbol = meta.currency === 'USD' ? '$' : (meta.currency || '$');
+
+  document.getElementById('entryPrice').value = price.toFixed(2);
+  document.getElementById('targetPrice').value = (price * 1.20).toFixed(2);
+  document.getElementById('stopLoss').value = (price * 0.90).toFixed(2);
+  document.getElementById('prefillNotice').classList.remove('hidden');
+  updateStep1();
+
+  const isUp = changePct >= 0;
+  const changeLabel = (isUp ? '▲ +' : '▼ ') + Math.abs(changePct).toFixed(2) + '%';
 
   banner.className = 'market-banner';
   banner.innerHTML = `
     <div>
       <div class="market-ticker">${ticker}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${market.name || ''}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">${name}</div>
     </div>
-    <div class="market-price">${market.currency || '$'}${parseFloat(market.price).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+    <div class="market-price">${currencySymbol}${price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
     <div class="market-change ${isUp ? 'up' : 'down'}">${changeLabel} today</div>
     <div class="market-stats">
       <div class="market-stat">
         <div class="market-stat-label">52W High</div>
-        <div class="market-stat-val">${market.high52w ? '$' + parseFloat(market.high52w).toLocaleString() : '—'}</div>
+        <div class="market-stat-val">${high52w ? currencySymbol + parseFloat(high52w).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : '—'}</div>
       </div>
       <div class="market-stat">
         <div class="market-stat-label">52W Low</div>
-        <div class="market-stat-val">${market.low52w ? '$' + parseFloat(market.low52w).toLocaleString() : '—'}</div>
+        <div class="market-stat-val">${low52w ? currencySymbol + parseFloat(low52w).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : '—'}</div>
       </div>
       <div class="market-stat">
         <div class="market-stat-label">Volume</div>
-        <div class="market-stat-val">${market.volume || '—'}</div>
+        <div class="market-stat-val">${volume}</div>
       </div>
     </div>
-    <div class="market-meta"><div class="live-dot"></div> LIVE DATA</div>
+    <div class="market-meta"><div class="live-dot"></div> YAHOO FINANCE</div>
   `;
+}
+
+function formatVolume(v) {
+  if (!v) return '—';
+  if (v >= 1e9) return (v / 1e9).toFixed(1) + 'B';
+  if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+  if (v >= 1e3) return (v / 1e3).toFixed(0) + 'K';
+  return v.toLocaleString();
 }
 
 // ─── Navigation ─────────────────────────────────────────────────────
