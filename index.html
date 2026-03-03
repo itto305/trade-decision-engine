@@ -29,25 +29,27 @@
     --watermark: #1e1e1e;
   }
 
-  html.light {
-    --bg: #f5f5f0;
-    --surface: #ffffff;
-    --border: #ddddd8;
-    --border-hover: #aaaaaa;
-    --accent: #5a9e00;
-    --accent-hover: #4d8800;
-    --accent-faint: rgba(90,158,0,0.08);
-    --accent-glow: rgba(90,158,0,0.25);
-    --text: #1a1a1a;
-    --muted: #999;
-    --muted2: #666;
-    --pass: #5a9e00;
-    --wait: #b86000;
-    --fail: #cc2200;
-    --grid-line: rgba(90,158,0,0.06);
-    --nav-bg: rgba(245,245,240,0.92);
-    --hero-color: #111111;
-    --watermark: #e8e8e8;
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f5f0;
+      --surface: #ffffff;
+      --border: #ddddd8;
+      --border-hover: #aaaaaa;
+      --accent: #5a9e00;
+      --accent-hover: #4d8800;
+      --accent-faint: rgba(90,158,0,0.08);
+      --accent-glow: rgba(90,158,0,0.25);
+      --text: #1a1a1a;
+      --muted: #999;
+      --muted2: #666;
+      --pass: #5a9e00;
+      --wait: #b86000;
+      --fail: #cc2200;
+      --grid-line: rgba(90,158,0,0.06);
+      --nav-bg: rgba(245,245,240,0.92);
+      --hero-color: #111111;
+      --watermark: #e8e8e8;
+    }
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -732,14 +734,6 @@
 </footer>
 
 <script>
-  // System theme detection
-  const sysDark = window.matchMedia('(prefers-color-scheme: dark)');
-  function applyTheme(dark) {
-    document.documentElement.classList.toggle('light', !dark);
-  }
-  applyTheme(sysDark.matches);
-  sysDark.addEventListener('change', e => applyTheme(e.matches));
-
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {

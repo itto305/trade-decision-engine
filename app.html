@@ -36,8 +36,8 @@
     --score-tile-bg: #111111;
   }
 
-  /* ── Light mode via class ── */
-  html.light {
+  /* ── Manual light override (beats @media) ── */
+  html[data-theme="light"] {
     --bg: #f5f5f0;
     --surface: #ffffff;
     --border: #ddddd8;
@@ -66,7 +66,37 @@
     --score-tile-bg: #f5f5f0;
   }
 
-  /* ── Light mode via system preference (fallback) ── */
+  /* ── Manual dark override (beats @media when system is light) ── */
+  html[data-theme="dark"] {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --border: #1f1f1f;
+    --border-hover: #444444;
+    --accent: #c8f542;
+    --accent-hover: #d4ff55;
+    --accent-faint: rgba(200,245,66,0.08);
+    --accent-glow: rgba(200,245,66,0.2);
+    --accent-muted: rgba(200,245,66,0.5);
+    --accent2: #ff4d4d;
+    --accent3: #4daaff;
+    --accent3-faint: rgba(77,170,255,0.3);
+    --text: #e8e8e8;
+    --muted: #666;
+    --pass: #c8f542;
+    --fail: #ff4d4d;
+    --wait: #ffb84d;
+    --grid-line: rgba(200,245,66,0.03);
+    --input-bg: #0a0a0a;
+    --computed-bg: #0d1a00;
+    --computed-border: rgba(200,245,66,0.15);
+    --ai-bg: #050d1a;
+    --ai-border: rgba(77,170,255,0.2);
+    --ai-text: #8ab4d4;
+    --h1-color: #ffffff;
+    --score-tile-bg: #111111;
+  }
+
+  /* ── System light preference (automatic, no JS needed) ── */
   @media (prefers-color-scheme: light) {
     :root {
       --bg: #f5f5f0;
@@ -1347,9 +1377,12 @@ function resetSettings() {
 
 // ─── Theme ───────────────────────────────────────────────────────────
 function toggleTheme() {
-  const isLight = document.documentElement.classList.toggle('light');
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  document.getElementById('themeToggle').textContent = isLight ? '🌙' : '☀️';
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const current = document.documentElement.dataset.theme || (sysDark.matches ? 'dark' : 'light');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem('theme', next);
+  document.getElementById('themeToggle').textContent = next === 'light' ? '🌙' : '☀️';
 }
 
 // ─── Direction ──────────────────────────────────────────────────────
@@ -2037,20 +2070,18 @@ function resetAll() {
   const savedTheme = localStorage.getItem('theme');
   const sysDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-  function applyTheme(light) {
-    document.documentElement.classList.toggle('light', light);
-    document.getElementById('themeToggle').textContent = light ? '🌙' : '☀️';
+  function syncIcon() {
+    const t = document.documentElement.dataset.theme || (sysDark.matches ? 'dark' : 'light');
+    document.getElementById('themeToggle').textContent = t === 'light' ? '🌙' : '☀️';
   }
 
-  if (savedTheme === 'light') {
-    applyTheme(true);
-  } else if (savedTheme === 'dark') {
-    applyTheme(false);
-  } else {
-    // No manual preference — follow the OS
-    applyTheme(!sysDark.matches);
-    sysDark.addEventListener('change', e => applyTheme(!e.matches));
+  // Apply saved manual preference (if any); otherwise @media CSS handles it automatically
+  if (savedTheme) {
+    document.documentElement.dataset.theme = savedTheme;
   }
+
+  syncIcon();
+  sysDark.addEventListener('change', syncIcon);
 
   // Restore form state (may call goStep which triggers updateStep*)
   loadFormState();
