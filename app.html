@@ -2034,14 +2034,22 @@ function resetAll() {
 
 // ─── Init ──────────────────────────────────────────────────────────
 (function init() {
-  // Apply saved theme
   const savedTheme = localStorage.getItem('theme');
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function applyTheme(light) {
+    document.documentElement.classList.toggle('light', light);
+    document.getElementById('themeToggle').textContent = light ? '🌙' : '☀️';
+  }
+
   if (savedTheme === 'light') {
-    document.documentElement.classList.add('light');
-    document.getElementById('themeToggle').textContent = '🌙';
+    applyTheme(true);
   } else if (savedTheme === 'dark') {
-    document.documentElement.classList.remove('light');
-    document.getElementById('themeToggle').textContent = '☀️';
+    applyTheme(false);
+  } else {
+    // No manual preference — follow the OS
+    applyTheme(!sysDark.matches);
+    sysDark.addEventListener('change', e => applyTheme(!e.matches));
   }
 
   // Restore form state (may call goStep which triggers updateStep*)
