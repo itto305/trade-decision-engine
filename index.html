@@ -36,7 +36,37 @@
     --score-tile-bg: #111111;
   }
 
-  /* ── Light mode ── */
+  /* ── Light mode via class ── */
+  html.light :root {
+    --bg: #f5f5f0;
+    --surface: #ffffff;
+    --border: #ddddd8;
+    --border-hover: #aaaaaa;
+    --accent: #5a9e00;
+    --accent-hover: #4d8800;
+    --accent-faint: rgba(90,158,0,0.08);
+    --accent-glow: rgba(90,158,0,0.2);
+    --accent-muted: rgba(90,158,0,0.6);
+    --accent2: #cc2200;
+    --accent3: #1a6fc4;
+    --accent3-faint: rgba(26,111,196,0.2);
+    --text: #1a1a1a;
+    --muted: #888;
+    --pass: #5a9e00;
+    --fail: #cc2200;
+    --wait: #b86000;
+    --grid-line: rgba(90,158,0,0.06);
+    --input-bg: #fafaf7;
+    --computed-bg: #f0f7e6;
+    --computed-border: rgba(90,158,0,0.2);
+    --ai-bg: #eef4fb;
+    --ai-border: rgba(26,111,196,0.2);
+    --ai-text: #2a5a8a;
+    --h1-color: #111111;
+    --score-tile-bg: #f5f5f0;
+  }
+
+  /* ── Light mode via system preference (fallback) ── */
   @media (prefers-color-scheme: light) {
     :root {
       --bg: #f5f5f0;
@@ -634,8 +664,8 @@
     cursor: pointer;
     text-transform: uppercase;
     transition: all 0.15s;
-    display: block;
-    margin: 20px auto 0;
+    display: inline-block;
+    margin: 20px 6px 0;
   }
 
   .btn-reset:hover { color: var(--text); border-color: var(--border-hover); }
@@ -741,16 +771,169 @@
     .score-grid { grid-template-columns: repeat(3, 1fr); }
     h1 { font-size: 52px; }
   }
+
+  /* ── Header buttons ── */
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .icon-btn:hover { border-color: var(--border-hover); color: var(--text); }
+
+  /* ── Settings panel ── */
+  .settings-panel {
+    position: fixed;
+    top: 0; right: 0;
+    width: 320px;
+    height: 100vh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+  }
+  .settings-panel.hidden { display: none; }
+  .settings-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  .settings-overlay.hidden { display: none; }
+  .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .settings-title { font-family: 'Bebas Neue', cursive; font-size: 20px; letter-spacing: 0.1em; color: var(--text); }
+  .settings-body { flex: 1; overflow-y: auto; }
+  .settings-group { margin-bottom: 20px; }
+  .settings-group label { display: block; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .settings-group input { width: 100%; padding: 10px 12px; background: var(--input-bg); border: 1px solid var(--border); color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px; border-radius: 2px; box-sizing: border-box; }
+  .settings-group input:focus { outline: none; border-color: var(--accent); }
+  .settings-footer { display: flex; gap: 12px; margin-top: 24px; }
+
+  /* ── Direction toggle ── */
+  .direction-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+  .direction-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .direction-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-faint); }
+
+  /* ── Warning banner ── */
+  .warn-banner {
+    background: rgba(255,184,77,0.1);
+    border: 1px solid rgba(255,184,77,0.4);
+    border-radius: 2px;
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--wait);
+    margin-bottom: 16px;
+  }
+  .warn-banner.hidden { display: none; }
+
+  /* ── Cancel AI button ── */
+  .cancel-btn {
+    background: none;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  .cancel-btn:hover { background: rgba(255,77,77,0.1); }
+  .cancel-btn.hidden { display: none; }
+
+  /* ── History styles ── */
+  .history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .btn-text-sm {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .btn-text-sm:hover { color: var(--accent2); }
+  .history-card {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: var(--surface);
+    transition: border-color 0.2s;
+  }
+  .history-card:hover { border-color: var(--border-hover); }
+  .history-card-main { display: flex; justify-content: space-between; align-items: center; }
+  .history-asset { font-family: 'Bebas Neue', cursive; font-size: 20px; color: var(--text); letter-spacing: 0.05em; }
+  .history-date { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .history-verdict { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+  .history-verdict.pass { color: var(--pass); }
+  .history-verdict.wait { color: var(--wait); }
+  .history-verdict.fail { color: var(--fail); }
+  .history-passes { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted); }
+  .history-details {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .history-details span { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  /* ── Print styles ── */
+  @media print {
+    body { background: white !important; color: black !important; }
+    body::before { display: none; }
+    #step0, .progress-bar, #progressWrap, .card, #settingsBtn, #themeToggle, .settings-panel, .settings-overlay, #historySection { display: none !important; }
+    #verdictSection { display: block !important; }
+    .verdict-card { border: 1px solid #ccc !important; background: white !important; }
+    .btn-reset, .ai-header button { display: none !important; }
+    .ai-text { color: #333 !important; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
 
   <!-- HEADER -->
-  <div class="header">
-    <div class="eyebrow">Asset Selection Framework</div>
-    <h1>TRADE<span>DECISION</span>ENGINE</h1>
-    <div class="subtitle">// 5-criteria risk-weighted analysis tool</div>
+  <div class="header" style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div class="eyebrow">Asset Selection Framework</div>
+      <h1>TRADE<span>DECISION</span>ENGINE</h1>
+      <div class="subtitle">// 5-criteria risk-weighted analysis tool</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="themeToggle" class="icon-btn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+      <button id="settingsBtn" class="icon-btn" onclick="toggleSettings()" title="Settings">⚙</button>
+    </div>
   </div>
 
   <!-- ASSET INPUT (Step 0) -->
@@ -761,6 +944,14 @@
     <div style="margin-top:16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="startAnalysis()">BEGIN ANALYSIS →</button>
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">5 criteria · AI verdict</div>
+    </div>
+
+    <div id="historySection" style="margin-top:40px;display:none;">
+      <div class="history-header">
+        <span style="font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:0.1em;color:var(--muted)">TRADE HISTORY</span>
+        <button class="btn-text-sm" onclick="clearHistory()">CLEAR ALL</button>
+      </div>
+      <div id="historyList"></div>
     </div>
   </div>
 
@@ -784,6 +975,15 @@
     <!-- Live market data banner (populated by JS) -->
     <div id="marketBanner" class="hidden"></div>
     <div id="prefillNotice" class="prefill-notice hidden">↳ ENTRY PRICE PRE-FILLED FROM LIVE MARKET DATA — ADJUST AS NEEDED</div>
+
+    <!-- Direction toggle -->
+    <div class="direction-toggle">
+      <button class="direction-btn active" data-dir="long" onclick="setDirection('long')">LONG ↑</button>
+      <button class="direction-btn" data-dir="short" onclick="setDirection('short')">SHORT ↓</button>
+    </div>
+
+    <!-- Input validation warning -->
+    <div id="step1Warn" class="warn-banner hidden"></div>
 
     <div class="field-row">
       <div class="field">
@@ -1044,29 +1244,245 @@
       <!-- AI Analysis -->
       <div class="ai-box">
         <div class="ai-header">
-          <div class="ai-dot"></div>
+          <div class="ai-dot" id="aiDot"></div>
           <div class="ai-label">Claude AI Analysis</div>
+          <button id="cancelAIBtn" class="cancel-btn hidden" onclick="cancelAI()">✕ STOP</button>
         </div>
         <div class="ai-text" id="aiText"><span class="spinner"></span>Analyzing trade parameters...</div>
       </div>
 
-      <button class="btn-reset" onclick="resetAll()">↺ ANALYZE ANOTHER TRADE</button>
+      <div style="text-align:center;">
+        <button class="btn-reset" onclick="exportReport()" style="background:transparent;border:1px solid var(--border);color:var(--muted);margin-right:12px;">↓ EXPORT PDF</button>
+        <button class="btn-reset" onclick="resetAll()">↺ ANALYZE ANOTHER TRADE</button>
+      </div>
     </div>
   </div>
 
 </div>
 
+<!-- SETTINGS PANEL -->
+<div id="settingsPanel" class="settings-panel hidden">
+  <div class="settings-header">
+    <span class="settings-title">SETTINGS</span>
+    <button class="icon-btn" onclick="toggleSettings()">✕</button>
+  </div>
+  <div class="settings-body">
+    <div class="settings-group">
+      <label>Min Risk/Reward Ratio</label>
+      <input type="number" id="s_rrMinimum" min="1" max="10" step="0.1" value="2.0">
+    </div>
+    <div class="settings-group">
+      <label>Max Portfolio Risk %</label>
+      <input type="number" id="s_maxPortRisk" min="1" max="50" step="1" value="10">
+    </div>
+    <div class="settings-group">
+      <label>Min Edge Score (1-5)</label>
+      <input type="number" id="s_minEdgeScore" min="1" max="5" step="1" value="3">
+    </div>
+    <div class="settings-group">
+      <label>Min Div Score (0-5)</label>
+      <input type="number" id="s_minDivScore" min="0" max="5" step="1" value="3">
+    </div>
+    <div class="settings-group">
+      <label>Kelly Multiplier</label>
+      <input type="number" id="s_kellyMultiplier" min="0.1" max="1" step="0.1" value="0.5">
+    </div>
+    <div class="settings-group">
+      <label>Risk % per Trade</label>
+      <input type="number" id="s_riskPerTrade" min="0.5" max="10" step="0.5" value="2">
+    </div>
+  </div>
+  <div class="settings-footer">
+    <button class="btn btn-primary" onclick="saveSettingsForm()">SAVE</button>
+    <button class="btn btn-ghost" onclick="resetSettings()">RESET</button>
+  </div>
+</div>
+<div id="settingsOverlay" class="settings-overlay hidden" onclick="toggleSettings()"></div>
+
 <script>
 // ─── State ──────────────────────────────────────────────────────────
 let currentStep = 0;
 let selectedEdgeTypes = [];
+let tradeDirection = 'long';
+let aiCancelled = false;
+
+// ─── Settings ───────────────────────────────────────────────────────
+const SETTING_DEFAULTS = { rrMinimum: 2.0, maxPortRisk: 10, minEdgeScore: 3, minDivScore: 3, kellyMultiplier: 0.5, riskPerTrade: 2 };
+
+function loadSettings() {
+  return Object.assign({}, SETTING_DEFAULTS, JSON.parse(localStorage.getItem('settings') || '{}'));
+}
+
+function toggleSettings() {
+  const panel = document.getElementById('settingsPanel');
+  const overlay = document.getElementById('settingsOverlay');
+  panel.classList.toggle('hidden');
+  overlay.classList.toggle('hidden');
+  if (!panel.classList.contains('hidden')) populateSettingsForm();
+}
+
+function populateSettingsForm() {
+  const s = loadSettings();
+  Object.keys(SETTING_DEFAULTS).forEach(k => {
+    const el = document.getElementById('s_' + k);
+    if (el) el.value = s[k];
+  });
+}
+
+function saveSettingsForm() {
+  const s = {};
+  Object.keys(SETTING_DEFAULTS).forEach(k => {
+    const el = document.getElementById('s_' + k);
+    if (el) s[k] = parseFloat(el.value);
+  });
+  localStorage.setItem('settings', JSON.stringify(s));
+  toggleSettings();
+  if (currentStep >= 1 && currentStep <= 5) goStep(currentStep);
+}
+
+function resetSettings() {
+  localStorage.removeItem('settings');
+  populateSettingsForm();
+}
+
+// ─── Theme ───────────────────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  document.getElementById('themeToggle').textContent = isLight ? '🌙' : '☀️';
+}
+
+// ─── Direction ──────────────────────────────────────────────────────
+function setDirection(dir) {
+  tradeDirection = dir;
+  document.querySelectorAll('.direction-btn').forEach(b => b.classList.toggle('active', b.dataset.dir === dir));
+  updateStep1();
+}
+
+// ─── Form State Persistence ─────────────────────────────────────────
+function saveFormState() {
+  if (currentStep === 0) return;
+  const state = {
+    assetName: document.getElementById('assetName').value,
+    step: currentStep,
+    tradeDirection,
+    entryPrice: document.getElementById('entryPrice').value,
+    targetPrice: document.getElementById('targetPrice').value,
+    stopLoss: document.getElementById('stopLoss').value,
+    timeframe: document.getElementById('timeframe').value,
+    portfolioSize: document.getElementById('portfolioSize').value,
+    positionAmount: document.getElementById('positionAmount').value,
+    drawdown: document.getElementById('drawdown').value,
+    edgeScore: document.getElementById('edgeScore').value,
+    selectedEdgeTypes: selectedEdgeTypes,
+    numPositions: document.getElementById('numPositions').value,
+    correlation: document.getElementById('correlation').value,
+    divScore: document.getElementById('divScore').value,
+    winRate: document.getElementById('winRate').value,
+    sizingMethod: document.getElementById('sizingMethod').value
+  };
+  localStorage.setItem('formState', JSON.stringify(state));
+}
+
+function loadFormState() {
+  const raw = localStorage.getItem('formState');
+  if (!raw) return;
+  const s = JSON.parse(raw);
+  if (!s.assetName) return;
+  document.getElementById('assetName').value = s.assetName || '';
+  const fields = ['entryPrice','targetPrice','stopLoss','portfolioSize','positionAmount','drawdown','edgeScore','numPositions','divScore','winRate'];
+  fields.forEach(id => { if (s[id] !== undefined) document.getElementById(id).value = s[id]; });
+  if (s.timeframe) document.getElementById('timeframe').value = s.timeframe;
+  if (s.correlation) document.getElementById('correlation').value = s.correlation;
+  if (s.sizingMethod) document.getElementById('sizingMethod').value = s.sizingMethod;
+  if (s.tradeDirection) {
+    tradeDirection = s.tradeDirection;
+    document.querySelectorAll('.direction-btn').forEach(b => b.classList.toggle('active', b.dataset.dir === tradeDirection));
+  }
+  if (Array.isArray(s.selectedEdgeTypes)) {
+    selectedEdgeTypes = s.selectedEdgeTypes;
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('selected', selectedEdgeTypes.includes(c.dataset.val)));
+  }
+  if (s.step > 0) {
+    document.getElementById('step0').style.display = 'none';
+    document.getElementById('progressWrap').classList.remove('hidden');
+    goStep(s.step);
+  }
+}
+
+// ─── Trade History ───────────────────────────────────────────────────
+function saveTradeToHistory(record) {
+  const history = JSON.parse(localStorage.getItem('tradeHistory') || '[]');
+  history.unshift(record);
+  if (history.length > 50) history.pop();
+  localStorage.setItem('tradeHistory', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = JSON.parse(localStorage.getItem('tradeHistory') || '[]');
+  const section = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  if (!history.length) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  list.innerHTML = history.map(t => {
+    const vClass = t.verdict === 'ENTER' ? 'pass' : t.verdict === 'WAIT' ? 'wait' : 'fail';
+    const icon = t.verdict === 'ENTER' ? '✅' : t.verdict === 'WAIT' ? '⏳' : '❌';
+    return `<div class="history-card">
+      <div class="history-card-main">
+        <div>
+          <div class="history-asset">${t.asset}</div>
+          <div class="history-date">${t.date} · ${t.timeframe}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="history-verdict ${vClass}">${icon} ${t.verdict}</div>
+          <div class="history-passes">${t.passCount}/5</div>
+          <button class="icon-btn" onclick="deleteTradeFromHistory(${t.id})" title="Delete">✕</button>
+        </div>
+      </div>
+      <div class="history-details">
+        <span>RR: ${t.rr ? t.rr.toFixed(1) : '—'}:1</span>
+        <span>Risk: ${t.portRisk ? t.portRisk.toFixed(1) : '—'}%</span>
+        <span>Edge: ${t.edgeScore}/5</span>
+        <span>Div: ${t.divScore}/5</span>
+        <span>Size: $${t.posAmt ? Math.round(t.posAmt).toLocaleString() : '—'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteTradeFromHistory(id) {
+  const history = JSON.parse(localStorage.getItem('tradeHistory') || '[]').filter(t => t.id !== id);
+  localStorage.setItem('tradeHistory', JSON.stringify(history));
+  renderHistory();
+}
+
+function clearHistory() {
+  if (confirm('Clear all trade history?')) {
+    localStorage.removeItem('tradeHistory');
+    renderHistory();
+  }
+}
+
+// ─── Export / PDF ────────────────────────────────────────────────────
+function exportReport() {
+  const asset = document.getElementById('assetName').value.trim().toUpperCase();
+  document.getElementById('verdictCard').setAttribute('data-asset', asset);
+  document.getElementById('verdictCard').setAttribute('data-date', new Date().toLocaleDateString());
+  window.print();
+}
+
+// ─── Cancel AI ───────────────────────────────────────────────────────
+function cancelAI() {
+  aiCancelled = true;
+  document.getElementById('cancelAIBtn').classList.add('hidden');
+}
 
 // ─── Step 0: Start ──────────────────────────────────────────────────
 async function startAnalysis() {
   const name = document.getElementById('assetName').value.trim();
   if (!name) { document.getElementById('assetName').focus(); return; }
 
-  // Show loading state on button
   const btn = document.querySelector('#step0 .btn-primary');
   btn.textContent = 'FETCHING MARKET DATA...';
   btn.disabled = true;
@@ -1075,7 +1491,6 @@ async function startAnalysis() {
   document.getElementById('progressWrap').classList.remove('hidden');
   goStep(1);
 
-  // Show loading banner
   const banner = document.getElementById('marketBanner');
   banner.classList.remove('hidden');
   banner.className = 'market-banner loading';
@@ -1120,28 +1535,23 @@ If it's a crypto use its current price in USD. Use the most recent trading price
 
   const data = await response.json();
 
-  // Extract text from response — could be after tool use blocks
   const textBlock = data.content?.find(b => b.type === 'text');
   if (!textBlock) throw new Error('No text response');
 
-  // Strip any accidental markdown fences
   const raw = textBlock.text.replace(/```json|```/g, '').trim();
   const market = JSON.parse(raw);
 
   if (market.error) throw new Error(market.error);
 
-  // Pre-fill entry price
   const price = parseFloat(market.price);
   if (price && price > 0) {
     document.getElementById('entryPrice').value = price.toFixed(2);
-    // Suggest target (+20%) and stop-loss (-10%) as sensible defaults
     document.getElementById('targetPrice').value = (price * 1.20).toFixed(2);
     document.getElementById('stopLoss').value = (price * 0.90).toFixed(2);
     document.getElementById('prefillNotice').classList.remove('hidden');
     updateStep1();
   }
 
-  // Render banner
   const isUp = parseFloat(market.changePct) >= 0;
   const changeLabel = (isUp ? '▲ +' : '▼ ') + Math.abs(market.changePct).toFixed(2) + '%';
 
@@ -1173,18 +1583,15 @@ If it's a crypto use its current price in USD. Use the most recent trading price
 
 // ─── Navigation ─────────────────────────────────────────────────────
 function goStep(n) {
-  // hide all steps
   [1,2,3,4,5].forEach(i => {
     document.getElementById('step'+i).classList.add('hidden');
   });
   document.getElementById('verdictSection').classList.add('hidden');
 
-  // show target
   const el = document.getElementById('step'+n);
   el.classList.remove('hidden');
   el.classList.add('active-card');
 
-  // update progress
   [1,2,3,4,5].forEach(i => {
     const ps = document.getElementById('ps'+i);
     ps.className = 'prog-step' + (i < n ? ' done' : i === n ? ' active' : '');
@@ -1192,7 +1599,6 @@ function goStep(n) {
 
   currentStep = n;
 
-  // trigger updates
   if (n===1) updateStep1();
   if (n===2) updateStep2();
   if (n===3) updateStep3();
@@ -1207,16 +1613,51 @@ function updateStep1() {
   const entry = parseFloat(document.getElementById('entryPrice').value) || 100;
   const target = parseFloat(document.getElementById('targetPrice').value) || 130;
   const stop = parseFloat(document.getElementById('stopLoss').value) || 90;
+  const settings = loadSettings();
 
-  const gain = ((target - entry) / entry * 100).toFixed(1);
-  const loss = ((stop - entry) / entry * 100).toFixed(1);
-  const rr = Math.abs(gain / loss).toFixed(1);
+  // Input validation
+  const warnEl = document.getElementById('step1Warn');
+  if (tradeDirection === 'long') {
+    if (stop >= entry) {
+      warnEl.textContent = 'For a LONG trade, your stop-loss must be below your entry price.';
+      warnEl.classList.remove('hidden');
+    } else if (target <= entry) {
+      warnEl.textContent = 'For a LONG trade, your target must be above your entry price.';
+      warnEl.classList.remove('hidden');
+    } else {
+      warnEl.classList.add('hidden');
+    }
+  } else {
+    // SHORT
+    if (stop <= entry) {
+      warnEl.textContent = 'For a SHORT trade, your stop-loss must be above your entry price.';
+      warnEl.classList.remove('hidden');
+    } else if (target >= entry) {
+      warnEl.textContent = 'For a SHORT trade, your target must be below your entry price.';
+      warnEl.classList.remove('hidden');
+    } else {
+      warnEl.classList.add('hidden');
+    }
+  }
 
-  document.getElementById('expGain').textContent = gain > 0 ? '+' + gain + '%' : gain + '%';
-  document.getElementById('expLoss').textContent = loss + '%';
+  let gain, loss;
+  if (tradeDirection === 'short') {
+    gain = (entry - target) / entry * 100;
+    loss = (stop - entry) / entry * 100;
+  } else {
+    gain = (target - entry) / entry * 100;
+    loss = (entry - stop) / entry * 100;
+  }
+
+  const gainFixed = gain.toFixed(1);
+  const lossFixed = loss.toFixed(1);
+  const rr = (Math.abs(gain) / Math.abs(loss)).toFixed(1);
+
+  document.getElementById('expGain').textContent = gain > 0 ? '+' + gainFixed + '%' : gainFixed + '%';
+  document.getElementById('expLoss').textContent = '-' + Math.abs(lossFixed) + '%';
   document.getElementById('rr').textContent = rr + ':1';
 
-  const pass = parseFloat(rr) >= 2;
+  const pass = parseFloat(rr) >= settings.rrMinimum;
   const rrV = document.getElementById('rrVerdict');
   rrV.textContent = pass ? '✅ PASS' : '❌ FAIL';
   rrV.className = 'computed-val ' + (pass ? 'good' : 'bad');
@@ -1224,9 +1665,11 @@ function updateStep1() {
   document.getElementById('rrTip').textContent =
     pass
       ? `→ ${rr}:1 ratio is strong. For every $1 risked you expect to gain $${rr}.`
-      : `→ Ratio below 2:1. Consider a higher target or tighter stop-loss.`;
+      : `→ Ratio below ${settings.rrMinimum}:1. Consider a higher target or tighter stop-loss.`;
 
   document.getElementById('rr').className = 'computed-val ' + (pass ? 'good' : 'bad');
+
+  saveFormState();
 }
 
 // ─── Step 2 Logic ───────────────────────────────────────────────────
@@ -1234,6 +1677,7 @@ function updateStep2() {
   const port = parseFloat(document.getElementById('portfolioSize').value) || 50000;
   const pos = parseFloat(document.getElementById('positionAmount').value) || 5000;
   const dd = parseInt(document.getElementById('drawdown').value) || 20;
+  const settings = loadSettings();
 
   document.getElementById('drawdownDisplay').textContent = dd + '%';
   document.getElementById('drawdownLabel').textContent = dd + '%';
@@ -1257,6 +1701,8 @@ function updateStep2() {
 
   const riskOK = parseFloat(portRiskPct) <= 5;
   document.getElementById('portRisk').className = 'computed-val ' + (riskOK ? 'good' : 'bad');
+
+  saveFormState();
 }
 
 // ─── Step 3 Logic ───────────────────────────────────────────────────
@@ -1268,6 +1714,7 @@ function toggleChip(el) {
   } else {
     selectedEdgeTypes.push(val);
   }
+  saveFormState();
 }
 
 function updateStep3() {
@@ -1276,7 +1723,7 @@ function updateStep3() {
   document.getElementById('edgeLabel').textContent = score + ' / 5';
 
   const tips = [
-    '', // 0 unused
+    '',
     'Pure speculation — no real edge. Maximum 1–2% of portfolio.',
     'Weak edge — vague feeling or low conviction. Treat as a lottery ticket.',
     'Moderate edge — some research done, directional confidence.',
@@ -1285,6 +1732,8 @@ function updateStep3() {
   ];
 
   document.getElementById('edgeTip').textContent = '→ ' + tips[score];
+
+  saveFormState();
 }
 
 // ─── Step 4 Logic ───────────────────────────────────────────────────
@@ -1292,6 +1741,7 @@ function updateStep4() {
   const n = parseInt(document.getElementById('numPositions').value) || 8;
   const corr = document.getElementById('correlation').value;
   const div = parseInt(document.getElementById('divScore').value) || 3;
+  const settings = loadSettings();
 
   document.getElementById('divDisplay').textContent = div;
 
@@ -1306,11 +1756,13 @@ function updateStep4() {
   document.getElementById('positionsTier').className = 'computed-val ' + tierCls;
 
   document.getElementById('divVerdict').textContent = div + ' / 5';
-  document.getElementById('divVerdict').className = 'computed-val ' + (div >= 3 ? 'good' : div === 2 ? 'warn' : 'bad');
+  document.getElementById('divVerdict').className = 'computed-val ' + (div >= settings.minDivScore ? 'good' : div === settings.minDivScore - 1 ? 'warn' : 'bad');
 
   const corrMap = { low: ['✅ LOW', 'good'], medium: ['⚠️ MEDIUM', 'warn'], high: ['❌ HIGH', 'bad'] };
   document.getElementById('corrVerdict').textContent = corrMap[corr][0];
   document.getElementById('corrVerdict').className = 'computed-val ' + corrMap[corr][1];
+
+  saveFormState();
 }
 
 // ─── Step 5 Logic ───────────────────────────────────────────────────
@@ -1323,6 +1775,7 @@ function updateStep5() {
   const target = parseFloat(document.getElementById('targetPrice').value) || 130;
   const stop = parseFloat(document.getElementById('stopLoss').value) || 90;
   const dd = parseInt(document.getElementById('drawdown').value) || 20;
+  const settings = loadSettings();
 
   document.getElementById('winDisplay').textContent = win + '%';
 
@@ -1333,11 +1786,11 @@ function updateStep5() {
     const rr = Math.abs((target - entry) / (entry - stop));
     const winFrac = win / 100;
     const kelly = winFrac - (1 - winFrac) / rr;
-    const halfKelly = Math.max(0, kelly / 2);
-    recSize = port * halfKelly;
+    const scaledKelly = Math.max(0, kelly * settings.kellyMultiplier);
+    recSize = port * scaledKelly;
   } else {
-    // Risk-based: risk 2% of portfolio, divide by drawdown%
-    const riskDollars = port * 0.02;
+    // Risk-based: risk riskPerTrade% of portfolio, divide by drawdown%
+    const riskDollars = port * (settings.riskPerTrade / 100);
     recSize = riskDollars / (dd / 100);
   }
 
@@ -1356,13 +1809,15 @@ function updateStep5() {
   document.getElementById('sizingOK').textContent = ok ? '✅ YES' : '❌ OVER LIMIT';
   document.getElementById('sizingOK').className = 'computed-val ' + (ok ? 'good' : 'bad');
   document.getElementById('recPct').className = 'computed-val ' + (parseFloat(recPct) <= 10 ? 'good' : parseFloat(recPct) <= 20 ? 'warn' : 'bad');
+
+  saveFormState();
 }
 
 // ─── Verdict ─────────────────────────────────────────────────────────
 function showVerdict() {
   const asset = document.getElementById('assetName').value.trim().toUpperCase();
+  const settings = loadSettings();
 
-  // Gather all values
   const entry = parseFloat(document.getElementById('entryPrice').value) || 100;
   const target = parseFloat(document.getElementById('targetPrice').value) || 130;
   const stop = parseFloat(document.getElementById('stopLoss').value) || 90;
@@ -1377,27 +1832,32 @@ function showVerdict() {
   const winRate = parseInt(document.getElementById('winRate').value) || 55;
   const method = document.getElementById('sizingMethod').value;
 
-  // Scores
-  const gain = ((target - entry) / entry * 100);
-  const loss = Math.abs((stop - entry) / entry * 100);
-  const rr = gain / loss;
-  const rrPass = rr >= 2;
+  let gain, loss;
+  if (tradeDirection === 'short') {
+    gain = (entry - target) / entry * 100;
+    loss = (stop - entry) / entry * 100;
+  } else {
+    gain = (target - entry) / entry * 100;
+    loss = (entry - stop) / entry * 100;
+  }
+  const rr = Math.abs(gain) / Math.abs(loss);
+  const rrPass = rr >= settings.rrMinimum;
 
   const maxLoss = posAmt * dd / 100;
   const portRisk = maxLoss / port * 100;
-  const ltPass = portRisk <= 10;
+  const ltPass = portRisk <= settings.maxPortRisk;
 
-  const edgePass = edgeScore >= 3;
-  const divPass = divScore >= 3 && corr !== 'high';
+  const edgePass = edgeScore >= settings.minEdgeScore;
+  const divPass = divScore >= settings.minDivScore && corr !== 'high';
 
   let recSize;
   if (method === 'fixed') recSize = port * 0.05;
   else if (method === 'kelly') {
     const r = Math.abs((target - entry) / (entry - stop));
     const w = winRate / 100;
-    recSize = port * Math.max(0, (w - (1 - w) / r) / 2);
+    recSize = port * Math.max(0, (w - (1 - w) / r) * settings.kellyMultiplier);
   } else {
-    recSize = (port * 0.02) / (dd / 100);
+    recSize = (port * (settings.riskPerTrade / 100)) / (dd / 100);
   }
   const maxByEdge = [0.01, 0.02, 0.05, 0.10, 0.20, 0.25][Math.min(edgeScore, 5)] * port;
   recSize = Math.min(recSize, maxByEdge, port * 0.25);
@@ -1406,7 +1866,6 @@ function showVerdict() {
   const passes = [rrPass, ltPass, edgePass, divPass, psPass];
   const passCount = passes.filter(Boolean).length;
 
-  // Determine verdict
   let verdict, icon, cls, sub;
   if (passCount === 5) {
     verdict = 'ENTER'; icon = '✅'; cls = 'pass';
@@ -1415,17 +1874,15 @@ function showVerdict() {
     verdict = 'WAIT'; icon = '⏳'; cls = 'wait';
     sub = `${passCount}/5 criteria passed for ${asset}. Some parameters need adjustment before this is worth entering. Review the failed criteria below.`;
   } else {
-    verdict = 'PASS'; icon = '❌'; cls = 'fail';
+    verdict = 'REJECT'; icon = '❌'; cls = 'fail';
     sub = `Only ${passCount}/5 criteria passed for ${asset}. Do not enter this trade. The risk profile is unfavorable. Fix the fundamentals first.`;
   }
 
-  // Render verdict
   document.getElementById('verdictCard').className = 'verdict-card ' + cls;
   document.getElementById('verdictIcon').textContent = icon;
   document.getElementById('verdictText').textContent = verdict;
   document.getElementById('verdictSub').textContent = sub;
 
-  // Score tiles
   const tiles = [
     { label: 'Risk/Reward', val: rr.toFixed(1) + ':1', pass: rrPass },
     { label: 'Loss Tolerance', val: portRisk.toFixed(1) + '% at risk', pass: ltPass },
@@ -1441,22 +1898,25 @@ function showVerdict() {
     </div>
   `).join('');
 
-  // Show verdict, hide steps
   [1,2,3,4,5].forEach(i => document.getElementById('step'+i).classList.add('hidden'));
   document.getElementById('verdictSection').classList.remove('hidden');
   document.getElementById('verdictSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Update progress
   [1,2,3,4,5].forEach(i => {
     document.getElementById('ps'+i).className = 'prog-step done';
   });
 
-  // Call AI
+  // Save to history
+  saveTradeToHistory({ id: Date.now(), date: new Date().toLocaleDateString(), asset, verdict, passCount, rr, portRisk, edgeScore, divScore: divScore, posAmt, port, timeframe, passes: [rrPass, ltPass, edgePass, divPass, psPass] });
+
   callAI(asset, { rr, gain, loss, rrPass, portRisk, ltPass, edgeScore, edgePass, selectedEdgeTypes, divScore, divPass, corr, numPos, recSize, psPass, posAmt, port, dd, timeframe, winRate, passCount, verdict });
 }
 
 // ─── AI Call ──────────────────────────────────────────────────────────
 async function callAI(asset, d) {
+  aiCancelled = false;
+  document.getElementById('cancelAIBtn').classList.remove('hidden');
+
   const prompt = `You are a sharp, experienced portfolio manager and trading coach. Analyze this trade using the Asset Selection Framework.
 
 ASSET: ${asset}
@@ -1498,7 +1958,6 @@ Write a concise, sharp 5-7 sentence analysis (no headers, no bullet points, flow
     const data = await response.json();
     const text = data.content?.find(b => b.type === 'text')?.text || 'Analysis unavailable.';
 
-    // Typewriter effect
     const el = document.getElementById('aiText');
     el.innerHTML = '';
     let i = 0;
@@ -1506,6 +1965,7 @@ Write a concise, sharp 5-7 sentence analysis (no headers, no bullet points, flow
     cursor.className = 'ai-cursor';
 
     function type() {
+      if (aiCancelled) { cursor.remove(); document.getElementById('cancelAIBtn').classList.add('hidden'); return; }
       if (i < text.length) {
         el.textContent = text.slice(0, i + 1);
         el.appendChild(cursor);
@@ -1513,42 +1973,66 @@ Write a concise, sharp 5-7 sentence analysis (no headers, no bullet points, flow
         setTimeout(type, 14);
       } else {
         cursor.remove();
+        document.getElementById('cancelAIBtn').classList.add('hidden');
       }
     }
     type();
 
   } catch (err) {
     document.getElementById('aiText').textContent = `Analysis error: ${err.message}`;
+    document.getElementById('cancelAIBtn').classList.add('hidden');
   }
 }
 
 // ─── Reset ──────────────────────────────────────────────────────────
 function resetAll() {
   selectedEdgeTypes = [];
+  tradeDirection = 'long';
   document.getElementById('assetName').value = '';
   document.getElementById('step0').style.display = '';
   document.getElementById('progressWrap').classList.add('hidden');
   [1,2,3,4,5].forEach(i => document.getElementById('step'+i).classList.add('hidden'));
   document.getElementById('verdictSection').classList.add('hidden');
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-  // Reset market data UI
+  document.querySelectorAll('.direction-btn').forEach(b => b.classList.toggle('active', b.dataset.dir === 'long'));
   const banner = document.getElementById('marketBanner');
   banner.classList.add('hidden');
   banner.innerHTML = '';
   document.getElementById('prefillNotice').classList.add('hidden');
-  // Reset price fields to defaults
   document.getElementById('entryPrice').value = '100';
   document.getElementById('targetPrice').value = '130';
   document.getElementById('stopLoss').value = '90';
+  localStorage.removeItem('formState');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ─── Init ──────────────────────────────────────────────────────────
-updateStep1();
-updateStep2();
-updateStep3();
-updateStep4();
-updateStep5();
+(function init() {
+  // Apply saved theme
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    document.documentElement.classList.add('light');
+    document.getElementById('themeToggle').textContent = '🌙';
+  } else if (savedTheme === 'dark') {
+    document.documentElement.classList.remove('light');
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+
+  // Restore form state (may call goStep which triggers updateStep*)
+  loadFormState();
+
+  // Render history on step 0
+  renderHistory();
+
+  // Run default updates if still on step 0
+  if (currentStep === 0) {
+    updateStep1();
+    updateStep2();
+    updateStep3();
+    updateStep4();
+    updateStep5();
+  }
+})();
 </script>
 </body>
 </html>
