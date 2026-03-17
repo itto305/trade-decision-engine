@@ -75,8 +75,8 @@
   <div class="back-link"><a href="index.html">Back to home</a></div>
 </div>
 <script>
-  const SUPA_URL='SUPABASE_URL_PLACEHOLDER';
-  const SUPA_KEY='SUPABASE_ANON_KEY_PLACEHOLDER';
+  const SUPA_URL='https://dsjeuupacxayhgiinaku.supabase.co';
+  const SUPA_KEY='sb_publishable_uXO6-XMO10E9avUXUhJ-mA_n23Q13oz';
   const{createClient}=supabase;
   const sb=createClient(SUPA_URL,SUPA_KEY);
   (async()=>{const{data:{session}}=await sb.auth.getSession();if(session)window.location.href='app.html';})();
